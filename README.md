@@ -1,132 +1,290 @@
-# osTicket: Prereqs & Installation (Full Walkthrough)
+<p align="center">
+<img src="https://i.imgur.com/Clzj7Xs.png"/>
+</p>
 
-This repo documents, step‑by‑step, how to deploy **osTicket** (open‑source help desk) on a Windows VM, like an entry‑level IT project. It mirrors the structure you often see on GitHub: headings + screenshots with short captions.
+<h1> How to Install osTicket </h1>
+This is an easy guide to installing a help desk ticketing system called osTicket.<br/>
 
-> **What you’ll practice**
-> - Spinning up a Windows VM (Azure)
-> - Enabling IIS (web server) + required Windows Features
-> - Installing PHP, MySQL, and osTicket
-> - Basic configuration & verification
-> - Taking/organizing screenshots and writing a clean README
 
----
+<h2> Files You Need to Download</h2>
 
-## ⚙️ Environments & Technologies Used
-- **Microsoft Azure** – Virtual Machine (Windows)
-- **Windows 10/11 or Windows Server** – OS for hosting IIS
-- **IIS (Internet Information Services)** – Web server role
-- **PHP** – Scripting runtime for osTicket
-- **MySQL (or MariaDB)** – Database server
-- **HeidiSQL** – GUI to manage MySQL (optional but helpful)
-- **osTicket** – Ticketing/help desk application
+- ### [Download Now](https://drive.google.com/drive/u/2/folders/1APMfNyfNzcxZC6EzdaNfdZsUwxWYChf6) 📁
 
-## 🖥️ Operating Systems Used
-- Windows 10/11 (Pro) *or* Windows Server 2019/2022
+<h2> Software & Technologies Used</h2>
 
-## ✅ Prerequisites
-- Azure account (free trial is fine)
-- GitHub account
-- Git (optional if you upload via GitHub web UI)
-- A text editor (VS Code recommended)
+- Windows 10 (Build 19044)
+- Microsoft Azure (Virtual Machines)
+- Remote Desktop (RDP)
+- Internet Information Services (IIS)
 
----
+  <h2> Prerequisites </h2>
 
-## 📸 Screenshots Index
-> Replace these image links with your own after you take screenshots on each step.
-1. Azure VM created – `images/01-azure-vm-created.png`
-2. Windows Features (IIS/Web Management) – `images/02-iis-features.png`
-3. PHP installed & verified with phpinfo – `images/03-phpinfo.png`
-4. MySQL installed – `images/04-mysql-installed.png`
-5. HeidiSQL connected – `images/05-heidisql.png`
-6. osTicket files in `C:\inetpub\wwwroot\` – `images/06-osticket-files.png`
-7. osTicket installer page loads – `images/07-installer.png`
-8. Installation complete / login – `images/08-installed.png`
+- Create a Virtual Machine in Azure
+- Install osTicket v1.15.8
+- Install HeidiSQL
+- Install MySQL
+- Install PHP
+- install Microsoft Visual C++ Redistributable
+  <h2>Steps</h2>
+<h3 align="center">Create Virtual Machine in Azure</h3>
+<br />
+<p>
+<h3 align="center">First, start by creating a Resource Group inside Azure.</h3>
+<br />
+</p>
+<p>
+	<img src="https://i.imgur.com/eBi5k2l.png" height="75%" width="100%" />
+</p>
+<p>
+<h3 align="center">Now, create a Windows 10 Virtual Machine (VM), typically with 2-4 Virtual CPUs. For username and password, it can be anything as we'll be using this info to remote in with our main computer. When creating the Virtual Machine (VM), allow Azure to create a new Virtual Network (Vnet):</h3>
+<br />
+</p>
+<p>
+	<img src="https://i.imgur.com/dEF1c7h.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Open your Remote Desktop Connection app on your computer and connect to your Virtual Machine that was created in Azure. </h3>
+<br />
+<p>
+	<img src="https://github.com/Joeljjoseph1998/osticket-prereqs/assets/50834280/2e71fd86-4198-47aa-aa1a-d0aed1b8e0eb"/>
+	
 
----
-
-## Step 1 — Create the VM (Azure)
-**Why:** We need a computer in the cloud to host the help desk.
-1. In Azure, create a **Windows** VM (size: `Standard_B1s` or better).  
-2. Allow **RDP (3389)** inbound in the NSG so you can log in.  
-3. Note its **public IP** and the **username/password** you set.  
-_Screenshot:_ `images/01-azure-vm-created.png`
-
-## Step 2 — Enable IIS + Required Windows Features
-**Why:** osTicket is a web app. IIS serves web pages to browsers.
-1. Open **Start → Turn Windows features on or off**.
-2. Enable:
-   - **Internet Information Services**
-   - **Web Management Tools**
-   - **World Wide Web Services → Application Development Features →** CGI, ISAPI Extensions, ISAPI Filters
-3. Apply & restart if prompted.  
-_Screenshot:_ `images/02-iis-features.png`
-
-## Step 3 — Install PHP
-**Why:** osTicket runs on PHP.
-1. Download **PHP for Windows** (Non‑Thread Safe, x64).
-2. Extract to `C:\PHP` and add to **System PATH**.
-3. In IIS Manager → *Handler Mappings* → add **FastCGI** for `php-cgi.exe`.
-4. Create a test file `C:\inetpub\wwwroot\phpinfo.php` with `<?php phpinfo(); ?>` and browse to `http://localhost/phpinfo.php`.  
-_Screenshot:_ `images/03-phpinfo.png`
-
-## Step 4 — Install MySQL (or MariaDB)
-**Why:** osTicket stores data (tickets, users) in a database.
-1. Install MySQL Server (note the **root** password).
-2. Optional: Install **HeidiSQL** for easier DB management.  
-_Screenshot:_ `images/04-mysql-installed.png` (MySQL) and `images/05-heidisql.png` (HeidiSQL)
-
-## Step 5 — Deploy osTicket Files
-**Why:** Put the app’s files where IIS can serve them.
-1. Download osTicket and extract into `C:\inetpub\wwwroot\osticket`.
-2. Ensure `IUSR`/`IIS_IUSRS` have read access (and write for setup).  
-_Screenshot:_ `images/06-osticket-files.png`
-
-## Step 6 — Run the Installer
-**Why:** This wires PHP + IIS + MySQL together for osTicket.
-1. Browse to `http://localhost/osticket/setup/`.
-2. Provide DB details (host: `localhost`, user: `root` or a new user, db name: `osticket`).
-3. Complete setup and then remove/secure the `setup` folder as prompted.  
-_Screenshots:_ `images/07-installer.png`, `images/08-installed.png`
-
----
-
-## 🧪 Verification
-- You can log into **osTicket Admin Panel** and create a test ticket.
-- The **phpinfo** page renders, proving PHP + IIS are wired up.
-- MySQL is reachable, and the `osticket` database exists.
-
-## 🧰 Repo Structure
-```
-.
-├─ images/
-│  ├─ 01-azure-vm-created.png
-│  ├─ 02-iis-features.png
-│  └─ …
-├─ README.md
-└─ .gitignore
-```
-
-## ✍️ How to Add Your Screenshots
-1. Put your `.png` files into the `images/` folder.
-2. In `README.md`, update each `images/XX-…png` path to match your file names.
-3. Commit and push.
-
-## ⬆️ Push This Project to GitHub
-```
-git init
-git add .
-git commit -m "Initial osTicket lab"
-git branch -M main
-git remote add origin <YOUR_REPO_URL>
-git push -u origin main
-```
-
----
-
-## 🧠 Quick Glossary (Plain English)
-- **VM (Virtual Machine):** A computer that lives inside another computer. Azure runs it for you.
-- **IIS:** Windows’ built‑in web server; it sends web pages to people.
-- **PHP:** A programming language osTicket is written in.
-- **MySQL:** A database; think of it like super‑powered spreadsheets for apps.
-- **HeidiSQL:** A friendly app to look at and edit the MySQL database.
-- **Git/GitHub:** Version control + a website to store and show your project. You “commit” changes and “push” them online.
+</p>
+<br />
+<br />
+<h3 align="center">Now we need to install / Enable IIS in Windows. Go to your Search Bar > Type "Control Panel" > Click "Programs" > "Turn Windows features on or off" > Scroll down to "Internet Information Services (IIS).</h3>
+<br />
+<p>
+	<img src="https://i.imgur.com/iB0DDRd.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Once clicked, find the "Internet Information Services" expand it and then expand the "World Wide Web" tab. Afterward, expand the application Developer tab. Finally check the "CGI" button & press Ok. You will need CGI to download the PHP Manager. The PHP manager is a back-end web programming language that allows osTicket to run off a web browser.</h3>
+<br />
+<p>
+  <img src="https://github.com/Joeljjoseph1998/osticket-prereqs/assets/50834280/a6af9c35-e10c-4d7e-b2c8-30ffbe128f08" height="75%" width="100%"/>
+</p>
+<br />
+<h3 align="center">Install PHP Manager</h3>
+<br />
+<p>
+<h3 align="center">Download the PHP manager file, and agree with all the terms. We've now downloaded the PHP manager into our operating system.</h3>
+<p>
+  <img src="https://i.imgur.com/pmwpPEu.png"height="75%" width="100%"/>
+</p>
+<br/>
+<h3 align="center">Install Rewrite Module</h3>
+<br />
+<p>
+<h3 align="center">Download the Rewrite Module file, agree with all the terms and it should now be installed onto the Computer.</h3>
+<p>
+  <img src="https://github.com/Joeljjoseph1998/osticket-prereqs/assets/50834280/28cf2dd0-d39e-45f8-a01b-61aec6657228"height="75%" width="100%"/>
+</p>
+<br/>
+<h3 align="center">CREATE DIRECTORY C:\PHP</h3>
+<br />
+<p>
+<h3 align="center"> Open File Explorer, type, "C:\" in the search bar, Right-click and create a new folder called, "PHP". Download php-7.3.8-nts-Win32-VC15-x86.zip from<a href="https://drive.google.com/drive/u/2/folders/1APMfNyfNzcxZC6EzdaNfdZsUwxWYChf6"> Files You Need to Download</a>, Extract it by going to where you download the file, Right-click the PHP 7.3.8 file and press extract to the PHP Folder you just created.
+</h3>
+<p>
+  <img src="https://github.com/Joeljjoseph1998/osticket-prereqs/assets/50834280/18746085-a3cf-4f1f-b0d5-5cd73f969319"height="75%" width="100%"/>
+</p>
+<br/>
+<h3 align="center">VC_REDIST DOWNLOAD</h3>
+<br/>
+<h3 align="center"> Download and install VC_Redist, Agree with any terms and agreements and finish installing.
+</h3>
+<p>
+  <img src="https://i.imgur.com/Gx8ryBV.png"75%" width="100%"/>
+</p>
+<br/>
+<h3 align="center">DOWNLOAD MySQL </h3>
+<h3 align="center"> Download and install MySQL, Agree with any terms and agreements up until you get to the password portion. Here you can create a username and password for the database that you'll be using to store the Ticket Information used in osTicket. 
+</h3>
+<p>
+  <img src="https://i.imgur.com/IVpLg40.png"75%" width="100%"/>
+<br/>
+  <img src="https://i.imgur.com/zdhWXNx.png" height="75%" width="100%" />
+</p>
+<br/>
+<h3 align="center">Install osTicket v1.15.8</h3>
+<br />
+<p>
+  Download osTicket (download from within lab files: link).
+</p>
+<p>
+	Extract and copy the “upload” folder INTO c:\inetpub\wwwroot:
+</p>
+	<img src="https://i.imgur.com/0MUJLMU.png" height="75%" width="100%" />
+	<img src="https://i.imgur.com/1h9goM8.png" height="75%" width="100%" />
+<p>
+	Within c:\inetpub\wwwroot, Rename “upload” to “osTicket”:
+</p>
+<p>
+	<img src="https://i.imgur.com/pDikkgq.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Reload IIS (Open IIS, Stop and Start the server)</h3>
+<br />
+<p>
+	Go to sites -> Default -> osTicket:
+</p>
+<p>
+	<img src="https://i.imgur.com/QeWNlG3.png" height="75%" width="100%" />
+</p>
+<p>
+	On the right, click “Browse *:80”:
+</p>
+<p>
+	<img src="https://i.imgur.com/3iXhNbi.png" height="75%" width="100%"/>
+</p>
+<br />
+<br />
+<h3 align="center">Enable Extensions in IIS: Note that some extensions are not enabled</h3>
+<br />
+<p>
+	Go back to IIS, sites -> Default -> osTicket.
+</p>
+<p>
+	Double-click PHP Manager:
+</p>
+<p>
+	<img src="https://i.imgur.com/LFKo5Hs.png" height="75%" width="100%" />
+</p>
+<p>
+	Click “Enable or disable an extension”.
+</p>
+<p>
+	Enable: php_imap.dll.
+</p>
+<p>
+	Enable: php_intl.dll.
+</p>
+<p>
+	Enable: php_opcache.dll:
+</p>
+<p>
+	<img src="https://imgur.com/a/nrQo0kz" height="75%" width="100%"/>
+</p>
+<br />
+<br />
+<h3 align="center">Refresh the osTicket site in your browser, observe the changes</h3>
+<br />
+<p>
+	<img src="https://i.imgur.com/6iSNd4H.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Rename</h3>
+<br />
+<p>
+	From: C:\inetpub\wwwroot\osTicket\include\ost-sampleconfig.php.
+</p>
+<p>
+	To: C:\inetpub\wwwroot\osTicket\include\ost-config.php:
+</p>
+<p>
+	<img src="https://i.imgur.com/TEw71SD.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Assign Permissions: ost-config.php</h3>
+<br />
+<p>
+	Disable inheritance -> Remove All:
+</p>
+<p>
+	<img src="https://i.imgur.com/1QtRWEF.png" height="75%" width="100%" />
+</p>
+<p>
+	New Permissions -> Everyone -> All:
+</p>
+<p>
+	<img src="https://i.imgur.com/YzsMXNX.png" height="75%" width="100%" />
+</p>
+<p>
+	<img src="https://i.imgur.com/k7x9yGR.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Continue Setting up osTicket in the browser (click Continue)</h3>
+<br />
+<p>
+	Name Helpdesk.
+</p>
+<p>
+	Default email (receives email from customers):
+</p>
+<p>
+	<img src="https://i.imgur.com/rvMvlNC.png" height="75%" width="100%" />
+	<img src="https://i.imgur.com/YszhIpl.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Download and Install HeidiSQL</h3>
+<br />
+<p>
+	<img src="https://i.imgur.com/AEg0b2P.png" height="75%" width="100%" />
+</p>
+<p>
+	Create a new session, root/Password1.
+</p>
+<p>
+	Connect to the session:
+</p>
+<p>
+	<img src="https://i.imgur.com/9t51ApR.png" height="75%" width="100%" "/>
+</p>
+<p>
+	Create a database called “osTicket”:
+</p>
+<p>
+	<img src="https://i.imgur.com/vXzmQqg.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Continue Setting up osTicket in the browser</h3>
+<br />
+<p>MySQL Database: osTicket</p>
+<p>
+	MySQL Username: root
+</p>
+<p>
+	MySQL Password: Password1:
+</p>
+<p>
+	<img src="https://i.imgur.com/akDyber.png" height="75%" width="100%" />
+</p>
+<p>Click “Install Now!”</p>
+<p>Congratulations, hopefully it is installed with no errors!</hp>
+<p>
+	<img src="https://i.imgur.com/J5omRoE.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Clean up</h3>
+<br />
+<p>
+	Delete: C:\inetpub\wwwroot\osTicket\setup:
+</p>
+<p>
+	<img src="https://i.imgur.com/eg0ZPG3.png" height="75%" width="100%" />
+</p>
+<p>
+	Set Permissions to “Read” only: C:\inetpub\wwwroot\osTicket\include\ost-config.php:
+</p>
+<p>
+	<img src="https://i.imgur.com/n6k46XL.png" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center">Login to the osTicket Admin Panel (http://localhost/osTicket/scp/login.php)</h3>
+<br />
+<p>
+	<img src="https://i.imgur.com/8wvWH0H.jpg" height="75%" width="100%" />
+</p>
+<br />
+<br />
+<h3 align="center"> Congrats, You've Finished Installing osTicket.</h3>
